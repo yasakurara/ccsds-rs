@@ -1,0 +1,1 @@
+pub const CCSDS_CADU_LENGTH: usize = 256;
