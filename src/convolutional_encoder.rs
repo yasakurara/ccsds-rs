@@ -11,14 +11,26 @@ pub const POLY_G2:u8 = 0x6d; // 0110 1101
 
 #[derive(Debug)]
 pub struct ConvolutionalEncoder {
-    symbols: [u8; (8*ccsds::CCSDS_CADU_LENGTH+6)*2]
+    symbols: [u8; (8*ccsds::CCSDS_CADU_LENGTH+6)*2],
+    metrics: [[i32; 64]; 2],
+    which_metrics: u8,
+    swept_out_bits: [u64; (8*ccsds::CCSDS_CADU_LENGTH+6)*2],
 }
 
 impl ConvolutionalEncoder {
     pub fn new() -> ConvolutionalEncoder {
-        let symbols = [0; (8*ccsds::CCSDS_CADU_LENGTH+6)*2];
+
+        // small metrics wins. Initial register is all 0, so metrics[0][0] becomes 0.
+        let mut metrics = [[0; 64]; 2];
+        for i in 1..64 {
+            metrics[0][i] = 63;
+        }
+
         ConvolutionalEncoder {
-            symbols
+            symbols : [0; (8*ccsds::CCSDS_CADU_LENGTH+6)*2],
+            metrics,
+            which_metrics : 0,
+            swept_out_bits : [0; (8*ccsds::CCSDS_CADU_LENGTH+6)*2],
         }
     }
 
